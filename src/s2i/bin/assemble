@@ -1,0 +1,39 @@
+#!/bin/sh -e
+#
+# S2I assemble script for the 'dotnet-30-runtime' image.
+# The 'assemble' script builds your application source so that it is ready to run.
+#
+# For more information refer to the documentation:
+#	https://github.com/openshift/source-to-image/blob/master/docs/builder_image.md
+#
+
+# If the 'dotnet-30-runtime' assemble script is executed with the '-h' flag, print the usage.
+if [[ "$1" == "-h" ]]; then
+	exec /usr/libexec/s2i/usage
+fi
+
+# Restore artifacts from the previous build (if they exist).
+#
+if [ "$(ls /tmp/artifacts/ 2>/dev/null)" ]; then
+  echo "---> Restoring build artifacts..."
+  mv /tmp/artifacts/. ./
+fi
+
+echo "Docker Info"
+id
+pwd
+
+echo "ls -la .."
+ls -la ..
+
+echo "ls -la /tmp/src/"
+ls -la /tmp/src/
+
+echo "End..."
+
+echo "---> Installing application source..."
+#cp -Rf /tmp/src/* ./
+
+cp -r /tmp/src/$COPY_PATH /opt/app-root/
+
+rm -fr /tmp/src/*

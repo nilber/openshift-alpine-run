@@ -1,0 +1,20 @@
+kind: ImageStream
+apiVersion: v1
+metadata:
+  name: alpine-run
+  annotations:
+    openshift.io/display-name: Alpine Run 1.0
+spec:
+  tags:
+  - name: '1.0'
+    annotations:
+      openshift.io/display-name: Alpine Run 1.0
+      description: |
+        Run applications on Alpine.
+        IMPORTANT:  environment variables COPY_PATH and RUN_PATH must be set by corresponding values in "Build Configuration" section
+      iconClass: icon-go-gopher
+      tags: builder,alpine-run
+      version: '1.0'
+    from:
+      kind: DockerImage
+      name: docker.io/nbmaster/openshift-alpine-run:1.0
