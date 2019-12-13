@@ -18,3 +18,15 @@ spec:
     from:
       kind: DockerImage
       name: docker.io/nbmaster/openshift-alpine-run:1.0
+  - name: 'http-server'
+    annotations:
+      openshift.io/display-name: Alpine Run http-server
+      description: |
+        Run applications on Alpine.
+        IMPORTANT:  environment variables COPY_PATH and RUN_PATH must be set by corresponding values in "Build Configuration" section
+      iconClass: icon-go-gopher
+      tags: builder,alpine-http-server
+      version: 'http-server'
+    from:
+      kind: DockerImage
+      name: docker.io/nbmaster/openshift-alpine-run:http-server
