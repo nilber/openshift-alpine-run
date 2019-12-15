@@ -40,7 +40,12 @@ else
      echo "Directory exists"  
 fi
 
-mv /tmp/src/* /opt/app-root/public/
+if [ -n "$PATH_COPY_FILES" ]; then
+  mv $PATH_COPY_FILES/* /opt/app-root/public/
+else
+  mv /tmp/src/* /opt/app-root/public/
+fi
+
 rm -fr /opt/app-root/public/Dockerfile
 rm -fr /opt/app-root/public/http-server
 rm -fr /opt/app-root/public/s2i
