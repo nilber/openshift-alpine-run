@@ -1,5 +1,5 @@
 # golang-alpine
-FROM alpine:latest  
+FROM ubuntu:latest  
 # TODO: Put the maintainer name in the image metadata
 LABEL maintainer="Nilber Vittorazzi <nilber@vittorazzi.com>"
 
@@ -13,8 +13,9 @@ LABEL io.k8s.description="Platform for run application" \
     io.openshift.tags="builder " \
     io.openshift.s2i.scripts-url="image:///usr/libexec/s2i"
 
+RUN apt update -y && apt upgrade -y && apt-get install vim curl wget -y && apt-get clean
 
-RUN apk --no-cache update && apk --no-cache upgrade
+RUN dpkg-reconfigure ca-certificates && update-ca-certificates
 
 # TODO: Copy the S2I scripts to /usr/libexec/s2i, since openshift/base-centos7 image
 # sets io.openshift.s2i.scripts-url label that way, or update that label
@@ -22,7 +23,9 @@ RUN mkdir -p /usr/libexec/
 COPY ./s2i/bin/ /usr/libexec/s2i
 RUN ls -l /usr/libexec/s2i
 
-RUN addgroup -S 1001 && adduser -S 1001 -G 1001
+RUN usermod -l 1001 www-data \
+    && usermod -u 1001 1001 \
+    && groupadd -g 1001 1001 && usermod -a -G 1001 1001
 
 
 WORKDIR /opt/app-root/
