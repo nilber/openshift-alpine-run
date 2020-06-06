@@ -13,26 +13,23 @@ LABEL io.k8s.description="Platform for run application" \
     io.openshift.tags="builder " \
     io.openshift.s2i.scripts-url="image:///usr/libexec/s2i"
 
-RUN apt update -y && apt upgrade -y && apt-get install vim curl wget -y
-
-#RUN dpkg-reconfigure ca-certificates && update-ca-certificates
-
-RUN apt install ca-certificates openssl -y 
-
-RUN apt-get install git build-essential libxml2-dev libfftw3-dev \
+RUN apt update -y && apt upgrade -y \
+    && apt-get install vim curl wget ca-certificates openssl \
+    git build-essential libxml2-dev libfftw3-dev \
 	libmagickwand-dev libopenexr-dev liborc-0.4-0 \
 	gobject-introspection libgsf-1-dev \
-	libglib2.0-dev liborc-0.4-dev -y
-
-RUN apt-get install autotools-dev make gtk-doc-tools automake -y && apt-get clean
-
-RUN git clone https://github.com/libvips/libvips.git \
+	libglib2.0-dev liborc-0.4-dev autotools-dev \
+    make gtk-doc-tools automake -y \
+    && git clone https://github.com/libvips/libvips.git \
     && cd libvips \
     && ./autogen.sh \
-    && make \
-    && make install    
+    && make -j$(nproc)\
+    && make install \
+    #&& cd .. && rm -fr libvips \
+    && curl -s https://raw.githubusercontent.com/h2non/bimg/master/preinstall.sh | bash - \    
+    && apt-get clean && apt autoremove -y
 
-RUN curl -s https://raw.githubusercontent.com/h2non/bimg/master/preinstall.sh | bash -
+#RUN apt-get install --reinstall libgtk2.0-0 -y
 
 # TODO: Copy the S2I scripts to /usr/libexec/s2i, since openshift/base-centos7 image
 # sets io.openshift.s2i.scripts-url label that way, or update that label
