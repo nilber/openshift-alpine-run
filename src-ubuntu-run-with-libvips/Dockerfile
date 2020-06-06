@@ -28,7 +28,7 @@ RUN apt update -y && apt upgrade -y \
     # && make install \
     # #&& cd .. && rm -fr libvips \
     # && curl -s https://raw.githubusercontent.com/h2non/bimg/master/preinstall.sh | bash - \    
-    && apt-get clean && apt autoremove -y
+    && apt-get clean && apt-get clean all && apt autoremove -y
 
 #RUN apt-get install --reinstall libgtk2.0-0 -y
 

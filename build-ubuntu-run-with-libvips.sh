@@ -4,8 +4,8 @@ DOCKER_IMAGEM=run
 S2I_IMAGEM=nbmaster/openshift-run
 TAG=ubuntu-with-libvips
 
-# docker system prune
-# docker rmi $DOCKER_IMAGEM:$TAG $S2I_IMAGEM:$TAG
+docker system prune
+docker rmi $DOCKER_IMAGEM:$TAG $S2I_IMAGEM:$TAG
 
 docker build src-ubuntu-run-with-libvips/ -t $DOCKER_IMAGEM:$TAG
 
