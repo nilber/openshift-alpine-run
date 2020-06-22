@@ -1,0 +1,23 @@
+#!/bin/sh -e
+#
+# S2I assemble script for the 'dotnet-30-runtime' image.
+# The 'assemble' script builds your application source so that it is ready to run.
+#
+# For more information refer to the documentation:
+#	https://github.com/openshift/source-to-image/blob/master/docs/builder_image.md
+#
+
+echo "---> Installing application source..."
+#cp -Rf /tmp/src/* ./
+
+echo "---> Download file..."
+if [ "$DOWNLOAD_URL" != "" ] ; then wget --no-check-certificate $DOWNLOAD_URL -O app.tar.gz ; else echo '(log) DOWNLOAD_URL variable not set'; fi
+
+echo "---> Publish from build..."
+if [ "$DOWNLOAD_URL" != "" ] ; then tar -xf app.tar.gz ; rm -f app.tar.gz ; mv app_build/* /opt/app-root/ ; else echo '(publish) DOWNLOAD_URL variable not set'; fi
+
+if [ "$COPY_PATH" != "" ] ; then cp -r /tmp/src/$COPY_PATH /opt/app-root/ ; else echo '(publish) COPY_PATH variable not set'; fi
+
+
+
+rm -fr /tmp/src/*

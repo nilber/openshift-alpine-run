@@ -50,3 +50,15 @@ rm -fr /opt/app-root/public/Dockerfile
 rm -fr /opt/app-root/public/http-server
 rm -fr /opt/app-root/public/s2i
 rm -fr /opt/app-root/public/.DS_Store
+
+if [[ -z "${CUSTOM_CMD}" ]]; then
+  echo "Nenhum comando customizado definido"
+else
+  echo '#!/bin/sh' > custom_cmd.sh
+  echo $CUSTOM_CMD >> custom_cmd.sh
+
+  cat ./custom_cmd.sh
+  chmod +x custom_cmd.sh
+  ./custom_cmd.sh
+  rm -f ./custom_cmd.sh
+fi

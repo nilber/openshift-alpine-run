@@ -1,0 +1,72 @@
+#!/bin/sh -e
+#
+# S2I assemble script for the 'dotnet-30-runtime' image.
+# The 'assemble' script builds your application source so that it is ready to run.
+#
+# For more information refer to the documentation:
+#	https://github.com/openshift/source-to-image/blob/master/docs/builder_image.md
+#
+
+# If the 'dotnet-30-runtime' assemble script is executed with the '-h' flag, print the usage.
+if [[ "$1" == "-h" ]]; then
+	exec /usr/libexec/s2i/usage
+fi
+
+# Restore artifacts from the previous build (if they exist).
+#
+if [ "$(ls /tmp/artifacts/ 2>/dev/null)" ]; then
+  echo "---> Restoring build artifacts..."
+  mv /tmp/artifacts/. ./
+fi
+
+echo "Docker Info"
+id
+pwd
+
+echo "ls -la .."
+ls -la ..
+
+echo "ls -la /tmp/src/"
+ls -la /tmp/src/
+
+echo "End..."
+
+echo "---> Installing application source..."
+#cp -Rf /tmp/src/* ./
+if [ ! -d /opt/app-root/public ]
+then
+     mkdir /opt/app-root/public
+else
+     echo "Directory exists"  
+fi
+
+if [ -n "$PATH_COPY_FILES" ]; then
+  mv $PATH_COPY_FILES/* /opt/app-root/public/
+else
+  mv /tmp/src/* /opt/app-root/public/
+fi
+
+rm -fr /opt/app-root/public/Dockerfile
+rm -fr /opt/app-root/public/http-server
+rm -fr /opt/app-root/public/s2i
+rm -fr /opt/app-root/public/.DS_Store
+
+if [[ -z "${CUSTOM_CMD}" ]]; then
+  echo "Nenhum comando customizado definido"
+else
+  echo '#!/bin/sh' > custom_cmd.sh
+  echo $CUSTOM_CMD >> custom_cmd.sh
+
+  cat ./custom_cmd.sh
+  chmod +x custom_cmd.sh
+  ./custom_cmd.sh
+  rm -f ./custom_cmd.sh
+fi
+
+echo "---> Download file..."
+if [ "$DOWNLOAD_URL" != "" ] ; then wget --no-check-certificate $DOWNLOAD_URL -O app.tar.gz ; else echo '(log) DOWNLOAD_URL variable not set'; fi
+
+echo "---> Publish from build..."
+if [ "$DOWNLOAD_URL" != "" ] ; then tar -xf app.tar.gz ; rm -f app.tar.gz ; mv app_build/* /opt/app-root/public/ ; else echo '(publish) DOWNLOAD_URL variable not set'; fi
+
+if [ "$COPY_PATH" != "" ] ; then cp -r /tmp/src/$COPY_PATH /opt/app-root/public/ ; else echo '(publish) COPY_PATH variable not set'; fi
