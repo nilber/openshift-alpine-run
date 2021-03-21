@@ -2,7 +2,7 @@
 
 DOCKER_IMAGEM=run
 S2I_IMAGEM=nbmaster/openshift-run
-TAG=ubuntu
+TAG=ubuntu-ca-certificates
 
 docker system prune
 docker rmi $DOCKER_IMAGEM:$TAG $S2I_IMAGEM:$TAG
